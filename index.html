@@ -4,528 +4,626 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sudharsan G — Workday Functional Engineer</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
   <style>
     /* ============================================
-       CSS VARIABLES — Edit easily here
+       WORKDAY + FLOWISE DESIGN SYSTEM
+       Workday: Deep Navy #0d1b3e, Blue #2c69b6, Orange/Sunrise #f4990b
+       Flowise: Dark canvas, Teal nodes #00d4b4, flow graph aesthetic
     ============================================ */
     :root {
-      --bg:         #080b0f;
-      --bg2:        #0c1016;
-      --bg3:        #11161e;
-      --bg4:        #161d27;
-      --border:     rgba(200,169,110,0.12);
-      --accent:     #c8a96e;
-      --accent-h:   #e0c48a;
-      --accent-dim: rgba(200,169,110,0.1);
-      --blue:       #4f8ef7;
-      --blue-dim:   rgba(79,142,247,0.1);
-      --text:       #f0ece4;
-      --text-muted: #8a8070;
-      --text-dim:   #3d3830;
-      --font-display:'Cormorant Garamond', serif;
-      --font-body:  'DM Sans', sans-serif;
-      --font-mono:  'DM Mono', monospace;
-      --radius:     14px;
-      --ease:       cubic-bezier(0.4,0,0.2,1);
+      /* Workday brand */
+      --wd-navy:      #0a1628;
+      --wd-navy2:     #0f1f38;
+      --wd-navy3:     #142645;
+      --wd-navy4:     #1a2f52;
+      --wd-blue:      #2c69b6;
+      --wd-blue-lt:   #4a87d0;
+      --wd-orange:    #f4990b;
+      --wd-orange-lt: #f7b040;
+      --wd-orange-dim:rgba(244,153,11,0.12);
+      /* Flowise brand */
+      --fw-teal:      #00d4b4;
+      --fw-teal-dim:  rgba(0,212,180,0.1);
+      --fw-teal-glow: rgba(0,212,180,0.2);
+      --fw-purple:    #7c5cbf;
+      /* Text */
+      --text:         #e8eef8;
+      --text-muted:   #7a90b8;
+      --text-dim:     #3a4f6e;
+      /* Shared */
+      --border:       rgba(44,105,182,0.2);
+      --border-wd:    rgba(244,153,11,0.15);
+      --radius:       12px;
+      --ease:         cubic-bezier(0.4,0,0.2,1);
+      --font:         'Inter', sans-serif;
+      --mono:         'DM Mono', monospace;
     }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    html { scroll-behavior:smooth; }
     body {
-      background: var(--bg);
+      background: var(--wd-navy);
       color: var(--text);
-      font-family: var(--font-body);
+      font-family: var(--font);
       font-size: 16px;
       line-height: 1.7;
       overflow-x: hidden;
       cursor: none;
     }
-    a { color: inherit; text-decoration: none; }
+    a { color:inherit; text-decoration:none; }
 
     /* ============================================
-       CUSTOM CURSOR
+       CUSTOM CURSOR — Workday orange dot
     ============================================ */
     .cursor {
-      position: fixed;
-      width: 10px; height: 10px;
-      background: var(--accent);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 99999;
-      transform: translate(-50%,-50%);
-      mix-blend-mode: screen;
-      transition: width 0.2s, height 0.2s;
+      position:fixed; width:8px; height:8px;
+      background:var(--wd-orange); border-radius:50%;
+      pointer-events:none; z-index:99999;
+      transform:translate(-50%,-50%);
+      transition:width .2s,height .2s;
+      box-shadow:0 0 8px rgba(244,153,11,0.6);
     }
     .cursor-ring {
-      position: fixed;
-      width: 36px; height: 36px;
-      border: 1px solid rgba(200,169,110,0.45);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 99998;
-      transform: translate(-50%,-50%);
-      transition: width 0.35s var(--ease), height 0.35s var(--ease), border-color 0.3s;
+      position:fixed; width:32px; height:32px;
+      border:1.5px solid rgba(244,153,11,0.4);
+      border-radius:50%; pointer-events:none;
+      z-index:99998; transform:translate(-50%,-50%);
+      transition:width .35s var(--ease),height .35s var(--ease),border-color .3s;
     }
-    .cursor-expand .cursor-ring { width: 56px; height: 56px; border-color: var(--accent); }
+    .cursor-expand .cursor-ring { width:52px; height:52px; border-color:var(--wd-orange); }
 
     /* ============================================
-       LIQUID BLOBS
+       FLOWISE NODE GRAPH BACKGROUND
     ============================================ */
-    .liquid-bg {
-      position: fixed; inset: 0;
-      pointer-events: none; z-index: 0; overflow: hidden;
+    .flow-canvas {
+      position:fixed; inset:0; pointer-events:none; z-index:0;
+      overflow:hidden;
     }
-    .blob {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(90px);
-      opacity: 0.06;
-      animation: blobDrift linear infinite;
-      will-change: transform;
-    }
-    .blob-1 { width:650px;height:650px;background:var(--accent);top:-15%;left:-10%;animation-duration:28s; }
-    .blob-2 { width:550px;height:550px;background:var(--blue);bottom:-10%;right:-8%;animation-duration:34s;animation-delay:-12s; }
-    .blob-3 { width:400px;height:400px;background:var(--accent);top:45%;left:45%;animation-duration:22s;animation-delay:-6s;opacity:0.035; }
-    @keyframes blobDrift {
-      0%   { transform:translate(0,0) scale(1); }
-      33%  { transform:translate(50px,-35px) scale(1.06); }
-      66%  { transform:translate(-25px,45px) scale(0.96); }
-      100% { transform:translate(0,0) scale(1); }
+    /* SVG node graph injected via JS */
+    .flow-canvas svg { width:100%; height:100%; opacity:0.12; }
+
+    /* Workday sunrise gradient glow */
+    .sunrise-glow {
+      position:fixed; inset:0; pointer-events:none; z-index:1;
+      background:
+        radial-gradient(ellipse 70% 40% at 50% 0%, rgba(244,153,11,0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 60% at 80% 80%, rgba(44,105,182,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 10% 60%, rgba(0,212,180,0.05) 0%, transparent 60%);
     }
 
-    .grid-texture {
-      position:fixed;inset:0;pointer-events:none;z-index:1;
-      background-image:
-        linear-gradient(rgba(200,169,110,0.022) 1px,transparent 1px),
-        linear-gradient(90deg,rgba(200,169,110,0.022) 1px,transparent 1px);
-      background-size:64px 64px;
-    }
     .grain {
-      position:fixed;inset:-50%;width:200%;height:200%;
-      pointer-events:none;z-index:2;opacity:0.025;
+      position:fixed; inset:-50%; width:200%; height:200%;
+      pointer-events:none; z-index:2; opacity:0.02;
       background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      animation:grainShift 0.5s steps(2) infinite;
+      animation:grain .5s steps(2) infinite;
     }
-    @keyframes grainShift {
-      0%{transform:translate(0,0)} 25%{transform:translate(-2%,2%)} 50%{transform:translate(2%,-1%)} 75%{transform:translate(-1%,1%)}
-    }
+    @keyframes grain { 0%{transform:translate(0,0)} 25%{transform:translate(-2%,2%)} 50%{transform:translate(2%,-1%)} 75%{transform:translate(-1%,1%)} }
 
-    /* ============================================
-       SCROLL PROGRESS
-    ============================================ */
+    /* Scroll bar — Workday orange */
     .scroll-bar {
-      position:fixed;top:0;left:0;height:2px;
-      background:linear-gradient(90deg,var(--accent),var(--blue));
-      z-index:9999;transform-origin:left;transform:scaleX(0);
+      position:fixed; top:0; left:0; height:3px;
+      background:linear-gradient(90deg,var(--wd-orange),var(--fw-teal));
+      z-index:9999; transform-origin:left; transform:scaleX(0);
     }
 
     /* ============================================
-       NAV
+       NAV — Workday style
     ============================================ */
     nav {
-      position:fixed;top:0;left:0;right:0;z-index:500;
-      display:flex;align-items:center;justify-content:space-between;
-      padding:1.2rem 4rem;
-      background:rgba(8,11,15,0.72);
-      backdrop-filter:blur(24px) saturate(1.4);
+      position:fixed; top:0; left:0; right:0; z-index:500;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 4rem;
+      height:64px;
+      background:rgba(10,22,40,0.88);
+      backdrop-filter:blur(20px) saturate(1.5);
       border-bottom:1px solid var(--border);
     }
-    .nav-logo {
-      font-family:var(--font-display);font-size:1.4rem;
-      font-weight:600;color:var(--accent);letter-spacing:0.02em;
+    /* Workday sunrise arch decoration on nav */
+    nav::before {
+      content:'';
+      position:absolute; bottom:0; left:0; right:0; height:2px;
+      background:linear-gradient(90deg, transparent, var(--wd-orange) 30%, var(--wd-blue) 60%, transparent);
+      opacity:0.5;
     }
-    .nav-links { display:flex;gap:2.5rem;list-style:none; }
+    .nav-logo {
+      display:flex; align-items:center; gap:0.8rem;
+      font-size:1rem; font-weight:700; color:var(--text); letter-spacing:0.02em;
+    }
+    .nav-name { font-size:0.95rem; font-weight:600; color:var(--text); }
+    .nav-role { font-size:0.72rem; color:var(--text-muted); font-weight:400; letter-spacing:0.04em; }
+
+    .nav-links { display:flex; gap:2rem; list-style:none; }
     .nav-links a {
-      font-size:0.78rem;font-weight:500;letter-spacing:0.12em;
-      text-transform:uppercase;color:var(--text-muted);
-      transition:color 0.3s;position:relative;
+      font-size:0.8rem; font-weight:500; letter-spacing:0.04em;
+      color:var(--text-muted); transition:color .3s; position:relative;
     }
     .nav-links a::after {
-      content:'';position:absolute;bottom:-3px;left:0;right:0;
-      height:1px;background:var(--accent);
-      transform:scaleX(0);transform-origin:left;transition:transform 0.3s var(--ease);
+      content:''; position:absolute; bottom:-4px; left:0; right:0;
+      height:2px; background:var(--wd-orange);
+      transform:scaleX(0); transform-origin:left; transition:transform .3s var(--ease);
     }
-    .nav-links a:hover { color:var(--accent); }
+    .nav-links a:hover { color:var(--wd-orange); }
     .nav-links a:hover::after { transform:scaleX(1); }
+
     .nav-cta {
-      font-size:0.78rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;
-      padding:0.55rem 1.4rem;border:1px solid var(--accent);color:var(--accent);
-      border-radius:4px;position:relative;overflow:hidden;
-      transition:color 0.3s var(--ease),box-shadow 0.3s var(--ease),transform 0.3s var(--ease);
+      font-size:0.8rem; font-weight:600; letter-spacing:0.04em;
+      padding:0.5rem 1.3rem;
+      background:var(--wd-orange); color:#fff;
+      border-radius:6px; position:relative; overflow:hidden;
+      transition:transform .3s var(--ease),box-shadow .3s var(--ease);
     }
     .nav-cta::before {
-      content:'';position:absolute;
-      top:50%;left:50%;width:0;height:0;
-      background:rgba(255,255,255,0.18);
-      border-radius:50%;transform:translate(-50%,-50%);
-      transition:width 0.65s var(--ease),height 0.65s var(--ease);z-index:0;
+      content:''; position:absolute;
+      top:50%; left:50%; width:0; height:0;
+      background:rgba(255,255,255,0.25); border-radius:50%;
+      transform:translate(-50%,-50%);
+      transition:width .6s var(--ease),height .6s var(--ease);
     }
-    .nav-cta::after {
-      content:'';position:absolute;inset:0;
-      background:var(--accent);transform:translateY(101%);
-      transition:transform 0.35s var(--ease);z-index:0;
-    }
-    .nav-cta span { position:relative;z-index:1; }
-    .nav-cta:hover::before { width:260px;height:260px; }
-    .nav-cta:hover::after { transform:translateY(0); }
-    .nav-cta:hover { color:var(--bg);box-shadow:0 8px 24px rgba(200,169,110,0.28);transform:translateY(-1px); }
+    .nav-cta span { position:relative; z-index:1; }
+    .nav-cta:hover::before { width:280px; height:280px; }
+    .nav-cta:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(244,153,11,0.4); }
 
     /* ============================================
-       HERO
+       HERO — Sunrise + Flow canvas
     ============================================ */
     .hero {
-      position:relative;z-index:10;min-height:100vh;
-      display:flex;align-items:center;
-      padding:8rem 4rem 4rem;overflow:hidden;
+      position:relative; z-index:10;
+      min-height:100vh; display:flex; align-items:center;
+      padding:8rem 4rem 4rem;
     }
-    .hero-glow {
-      position:absolute;width:900px;height:900px;
-      background:radial-gradient(circle,rgba(200,169,110,0.06) 0%,transparent 65%);
-      top:50%;left:40%;transform:translate(-50%,-50%);pointer-events:none;
-    }
-    .hero-content { position:relative;max-width:820px; }
+
+    .hero-content { position:relative; z-index:2; max-width:680px; }
 
     .hero-eyebrow {
-      display:inline-flex;align-items:center;gap:0.7rem;
-      font-family:var(--font-mono);font-size:0.72rem;letter-spacing:0.18em;
-      text-transform:uppercase;color:var(--accent);margin-bottom:1.8rem;
-      opacity:0;animation:slideUp 0.9s 0.1s var(--ease) forwards;
+      display:inline-flex; align-items:center; gap:0.6rem;
+      font-family:var(--mono); font-size:0.7rem; letter-spacing:0.16em;
+      text-transform:uppercase; color:var(--wd-orange);
+      margin-bottom:1.5rem;
+      opacity:0; animation:slideUp .9s .1s var(--ease) forwards;
     }
     .eyebrow-dot {
-      width:6px;height:6px;background:var(--accent);border-radius:50%;
-      animation:dotPulse 2.2s ease-in-out infinite;
+      width:6px; height:6px; background:var(--wd-orange); border-radius:50%;
+      animation:pulse 2s ease-in-out infinite;
+      box-shadow:0 0 8px rgba(244,153,11,0.6);
     }
-    @keyframes dotPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.6)} }
-    .eyebrow-line { width:32px;height:1px;background:var(--accent);opacity:0.5; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.6)} }
+    .eyebrow-dash { width:28px; height:1.5px; background:var(--wd-orange); opacity:.6; }
 
     .hero-name {
-      font-family:var(--font-display);font-size:clamp(4rem,9vw,8.5rem);
-      font-weight:300;line-height:0.93;letter-spacing:-0.02em;color:var(--text);
-      margin-bottom:0.7rem;opacity:0;animation:slideUp 0.9s 0.25s var(--ease) forwards;
+      font-size:clamp(3.5rem,8vw,7rem); font-weight:700;
+      line-height:.95; letter-spacing:-.03em; color:var(--text);
+      margin-bottom:.5rem;
+      opacity:0; animation:slideUp .9s .25s var(--ease) forwards;
     }
-    .hero-name em { font-style:italic;color:var(--accent);font-weight:300; }
+    .hero-name .first { color:var(--text); }
+    .hero-name .last {
+      color:var(--wd-orange);
+      text-shadow:0 0 40px rgba(244,153,11,0.25);
+    }
 
-    .hero-subtitle {
-      font-family:var(--font-display);font-size:clamp(1.1rem,2.2vw,1.65rem);
-      font-weight:300;font-style:italic;color:var(--text-muted);
-      margin-bottom:2.2rem;letter-spacing:0.01em;
-      opacity:0;animation:slideUp 0.9s 0.4s var(--ease) forwards;
+    .hero-title {
+      font-size:clamp(1rem,2vw,1.35rem); font-weight:400;
+      color:var(--text-muted); margin-bottom:1.8rem; letter-spacing:.01em;
+      opacity:0; animation:slideUp .9s .4s var(--ease) forwards;
     }
+    .hero-title .sep { color:var(--wd-orange); margin:0 .4rem; opacity:.6; }
+
+    /* Workday certified badge */
+    .hero-cert {
+      display:inline-flex; align-items:center; gap:.5rem;
+      font-family:var(--mono); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase;
+      color:var(--wd-blue-lt); background:rgba(44,105,182,0.12);
+      border:1px solid rgba(44,105,182,0.25); border-radius:20px;
+      padding:.3rem .9rem; margin-bottom:1.8rem;
+      opacity:0; animation:slideUp .9s .5s var(--ease) forwards;
+    }
+    .cert-dot { width:5px; height:5px; background:var(--wd-blue-lt); border-radius:50%; }
+
     .hero-desc {
-      font-size:0.97rem;color:var(--text-muted);max-width:520px;
-      line-height:1.85;margin-bottom:3rem;
-      opacity:0;animation:slideUp 0.9s 0.55s var(--ease) forwards;
+      font-size:.97rem; color:var(--text-muted); max-width:500px;
+      line-height:1.85; margin-bottom:2.5rem;
+      opacity:0; animation:slideUp .9s .55s var(--ease) forwards;
     }
+
     .hero-actions {
-      display:flex;gap:1rem;flex-wrap:wrap;
-      opacity:0;animation:slideUp 0.9s 0.7s var(--ease) forwards;
+      display:flex; gap:.8rem; flex-wrap:wrap;
+      opacity:0; animation:slideUp .9s .7s var(--ease) forwards;
     }
 
-    /* Liquid ripple button */
-    .btn-liquid {
-      position:relative;display:inline-flex;align-items:center;gap:0.5rem;
-      padding:0.9rem 2.2rem;background:var(--accent);color:var(--bg);
-      font-size:0.82rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;
-      border-radius:6px;overflow:hidden;
-      transition:transform 0.3s var(--ease),box-shadow 0.3s var(--ease);
+    /* Primary — Workday orange liquid */
+    .btn-primary {
+      position:relative; display:inline-flex; align-items:center; gap:.5rem;
+      padding:.85rem 2rem; background:var(--wd-orange); color:#fff;
+      font-size:.84rem; font-weight:600; letter-spacing:.03em;
+      border-radius:6px; overflow:hidden;
+      transition:transform .3s var(--ease),box-shadow .3s var(--ease);
     }
-    .btn-liquid::before {
-      content:'';position:absolute;top:50%;left:50%;
-      width:0;height:0;background:rgba(255,255,255,0.22);
-      border-radius:50%;transform:translate(-50%,-50%);
-      transition:width 0.65s var(--ease),height 0.65s var(--ease);
+    .btn-primary::before {
+      content:''; position:absolute;
+      top:50%; left:50%; width:0; height:0;
+      background:rgba(255,255,255,.25); border-radius:50%;
+      transform:translate(-50%,-50%);
+      transition:width .65s var(--ease),height .65s var(--ease);
     }
-    .btn-liquid:hover::before { width:320px;height:320px; }
-    .btn-liquid:hover { transform:translateY(-2px);box-shadow:0 14px 36px rgba(200,169,110,0.28); }
-    .btn-liquid span { position:relative;z-index:1; }
+    .btn-primary:hover::before { width:320px; height:320px; }
+    .btn-primary:hover { transform:translateY(-2px); box-shadow:0 12px 30px rgba(244,153,11,.4); }
+    .btn-primary span { position:relative; z-index:1; }
 
-    .btn-ghost {
-      display:inline-flex;align-items:center;gap:0.5rem;
-      padding:0.9rem 2.2rem;border:1px solid var(--border);color:var(--text-muted);
-      font-size:0.82rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;
-      border-radius:6px;transition:all 0.3s var(--ease);
+    /* Secondary — Workday blue outline */
+    .btn-secondary {
+      position:relative; display:inline-flex; align-items:center; gap:.5rem;
+      padding:.85rem 2rem; border:1.5px solid rgba(44,105,182,.4); color:var(--wd-blue-lt);
+      font-size:.84rem; font-weight:500; letter-spacing:.03em;
+      border-radius:6px; overflow:hidden;
+      transition:all .3s var(--ease);
     }
-    .btn-ghost:hover { border-color:var(--accent);color:var(--accent);transform:translateY(-2px); }
+    .btn-secondary::before {
+      content:''; position:absolute; inset:0;
+      background:rgba(44,105,182,.08);
+      transform:translateY(100%); transition:transform .35s var(--ease);
+    }
+    .btn-secondary span { position:relative; z-index:1; }
+    .btn-secondary:hover { border-color:var(--wd-blue-lt); transform:translateY(-2px); }
+    .btn-secondary:hover::before { transform:translateY(0); }
 
     /* Hero stat cards */
-    .hero-cards {
-      position:absolute;right:4rem;top:50%;transform:translateY(-50%);
-      display:flex;flex-direction:column;gap:1rem;
-      opacity:0;animation:slideLeft 0.9s 0.9s var(--ease) forwards;
+    .hero-stats {
+      position:absolute; right:4rem; top:50%; transform:translateY(-50%);
+      display:flex; flex-direction:column; gap:1rem;
+      opacity:0; animation:slideLeft .9s .9s var(--ease) forwards;
+      z-index:3;
     }
-    .h-card {
-      background:rgba(200,169,110,0.04);border:1px solid var(--border);
-      border-radius:var(--radius);padding:1.2rem 1.6rem;min-width:215px;
+    .h-stat {
+      background:rgba(10,22,40,0.75);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.2rem 1.6rem; min-width:210px;
       backdrop-filter:blur(16px);
-      transition:transform 0.3s var(--ease),border-color 0.3s,background 0.3s;
+      transition:transform .3s var(--ease),border-color .3s,background .3s;
+      position:relative; overflow:hidden;
     }
-    .h-card:hover { transform:translateX(-6px);border-color:var(--accent);background:rgba(200,169,110,0.08); }
-    .h-card-label { font-family:var(--font-mono);font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:0.25rem; }
-    .h-card-value { font-family:var(--font-display);font-size:1.6rem;font-weight:700;color:var(--text);line-height:1; }
-    .h-card-sub { font-size:0.72rem;color:var(--text-muted);margin-top:0.2rem; }
+    .h-stat::before {
+      content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
+      background:linear-gradient(180deg,var(--wd-orange),transparent);
+      transform:scaleY(0); transform-origin:top; transition:transform .4s var(--ease);
+    }
+    .h-stat:hover { transform:translateX(-6px); border-color:rgba(244,153,11,.35); background:rgba(15,31,56,0.9); }
+    .h-stat:hover::before { transform:scaleY(1); }
+    .h-stat-label { font-family:var(--mono); font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; color:var(--wd-orange); margin-bottom:.25rem; }
+    .h-stat-value { font-size:1.5rem; font-weight:700; color:var(--text); line-height:1; }
+    .h-stat-sub { font-size:.72rem; color:var(--text-muted); margin-top:.2rem; }
 
     /* ============================================
        SECTION BASE
     ============================================ */
-    section { position:relative;z-index:10;padding:6rem 4rem; }
+    section { position:relative; z-index:10; padding:6rem 4rem; }
     .s-label {
-      display:inline-flex;align-items:center;gap:0.8rem;
-      font-family:var(--font-mono);font-size:0.68rem;letter-spacing:0.18em;
-      text-transform:uppercase;color:var(--accent);margin-bottom:1rem;
+      display:inline-flex; align-items:center; gap:.7rem;
+      font-family:var(--mono); font-size:.68rem; letter-spacing:.16em;
+      text-transform:uppercase; color:var(--wd-orange); margin-bottom:.8rem;
     }
-    .s-label::before { content:'';display:block;width:20px;height:1px;background:var(--accent);opacity:0.5; }
+    .s-label::before { content:''; display:block; width:18px; height:1.5px; background:var(--wd-orange); opacity:.6; }
     .s-title {
-      font-family:var(--font-display);font-size:clamp(2.2rem,4vw,3.5rem);
-      font-weight:300;line-height:1.05;letter-spacing:-0.01em;
-      color:var(--text);margin-bottom:3rem;
+      font-size:clamp(2rem,3.5vw,3rem); font-weight:700;
+      line-height:1.1; letter-spacing:-.02em; color:var(--text); margin-bottom:2.8rem;
     }
-    .s-title strong { font-weight:700;color:var(--accent); }
+    .s-title .hl { color:var(--wd-orange); }
+    .s-title .hl-blue { color:var(--wd-blue-lt); }
     .divider {
-      position:relative;z-index:10;height:1px;margin:0 4rem;
+      position:relative; z-index:10; height:1px; margin:0 4rem;
       background:linear-gradient(90deg,transparent,var(--border) 20%,var(--border) 80%,transparent);
     }
 
     /* ============================================
        ABOUT
     ============================================ */
-    #about { background:var(--bg2); }
-    .about-grid { display:grid;grid-template-columns:1.1fr 0.9fr;gap:5rem;align-items:start; }
-    .about-text p { color:var(--text-muted);font-size:0.97rem;line-height:1.9;margin-bottom:1.2rem; }
-    .about-text p strong { color:var(--text);font-weight:500; }
-    .stat-grid { display:grid;grid-template-columns:1fr 1fr;gap:1rem; }
+    #about { background:var(--wd-navy2); }
+    .about-grid { display:grid; grid-template-columns:1.1fr .9fr; gap:5rem; align-items:start; }
+    .about-text p { color:var(--text-muted); font-size:.97rem; line-height:1.9; margin-bottom:1.2rem; }
+    .about-text p strong { color:var(--text); font-weight:600; }
+    .about-text p .orange { color:var(--wd-orange); font-weight:600; }
+    .about-text p .teal { color:var(--fw-teal); font-weight:600; }
+
+    .stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
     .stat-card {
-      background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);
-      padding:1.8rem;position:relative;overflow:hidden;
-      transition:transform 0.3s var(--ease),border-color 0.3s;
+      background:var(--wd-navy3); border:1px solid var(--border);
+      border-radius:var(--radius); padding:1.8rem;
+      position:relative; overflow:hidden;
+      transition:transform .3s var(--ease),border-color .3s;
     }
     .stat-card::after {
-      content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
-      background:linear-gradient(90deg,var(--accent),transparent);
-      transform:scaleX(0);transform-origin:left;transition:transform 0.4s var(--ease);
+      content:''; position:absolute; bottom:0; left:0; right:0; height:2px;
+      background:linear-gradient(90deg,var(--wd-orange),var(--wd-blue));
+      transform:scaleX(0); transform-origin:left; transition:transform .4s var(--ease);
     }
-    .stat-card:hover { transform:translateY(-4px);border-color:rgba(200,169,110,0.3); }
+    .stat-card:hover { transform:translateY(-4px); border-color:rgba(244,153,11,.3); }
     .stat-card:hover::after { transform:scaleX(1); }
-    .stat-num { font-family:var(--font-display);font-size:3.2rem;font-weight:700;color:var(--accent);line-height:1;margin-bottom:0.4rem; }
-    .stat-lbl { font-size:0.8rem;color:var(--text-muted);line-height:1.4; }
+    .stat-num { font-size:3rem; font-weight:800; color:var(--wd-orange); line-height:1; margin-bottom:.4rem; }
+    .stat-lbl { font-size:.8rem; color:var(--text-muted); line-height:1.4; }
 
     /* ============================================
-       EXPERTISE
+       EXPERTISE — Flowise node cards
     ============================================ */
-    #expertise { background:var(--bg); }
-    .modules-grid { display:grid;grid-template-columns:repeat(2,1fr);gap:1.2rem;margin-bottom:1.5rem; }
-    .mod-card {
-      background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);
-      padding:2rem;position:relative;overflow:hidden;cursor:default;
-      transition:transform 0.35s var(--ease),border-color 0.35s,box-shadow 0.35s;
+    #expertise { background:var(--wd-navy); }
+
+    /* Node connector line across top */
+    .node-bar {
+      display:flex; align-items:center; gap:0; margin-bottom:1.5rem;
+      position:relative;
     }
-    .mod-card::before {
-      content:'';position:absolute;
-      top:var(--my,50%);left:var(--mx,50%);
-      width:0;height:0;
-      background:radial-gradient(circle,rgba(200,169,110,0.09) 0%,transparent 70%);
-      border-radius:50%;transform:translate(-50%,-50%);
-      transition:width 0.65s var(--ease),height 0.65s var(--ease),opacity 0.5s;opacity:0;
+    .node-dot {
+      width:10px; height:10px; border-radius:50%;
+      background:var(--fw-teal); flex-shrink:0;
+      box-shadow:0 0 10px var(--fw-teal-glow);
     }
-    .mod-card::after {
-      content:'';position:absolute;top:0;left:0;right:0;height:1px;
-      background:linear-gradient(90deg,transparent,var(--accent),transparent);
-      transform:scaleX(0);transition:transform 0.4s var(--ease);
+    .node-line {
+      flex:1; height:1px;
+      background:linear-gradient(90deg,var(--fw-teal),rgba(0,212,180,.15));
     }
-    .mod-card:hover::before { width:420px;height:420px;opacity:1; }
-    .mod-card:hover::after { transform:scaleX(1); }
-    .mod-card:hover { transform:translateY(-4px);border-color:rgba(200,169,110,0.25);box-shadow:0 20px 50px rgba(0,0,0,0.45),0 0 0 1px rgba(200,169,110,0.07); }
-    .mod-icon { font-size:1.8rem;margin-bottom:1rem; }
-    .mod-name { font-family:var(--font-display);font-size:1.3rem;font-weight:600;color:var(--text);margin-bottom:0.6rem; }
-    .mod-desc { font-size:0.84rem;color:var(--text-muted);line-height:1.65;position:relative;z-index:1; }
-    .mod-tag {
-      display:inline-block;margin-top:1.2rem;
-      font-family:var(--font-mono);font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;
-      color:var(--accent);background:var(--accent-dim);padding:0.28rem 0.7rem;border-radius:3px;
-      position:relative;z-index:1;
+    .node-label {
+      font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase;
+      color:var(--fw-teal); margin-left:1rem;
+      background:var(--fw-teal-dim); border:1px solid rgba(0,212,180,.2);
+      padding:.25rem .7rem; border-radius:3px;
     }
 
-    .ai-card {
-      background:linear-gradient(135deg,rgba(79,142,247,0.05) 0%,rgba(200,169,110,0.06) 100%);
-      border:1px solid rgba(200,169,110,0.22);
+    .modules-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:1.2rem; margin-bottom:1.5rem; }
+
+    /* Flowise-style node card */
+    .mod-card {
+      background:var(--wd-navy3);
+      border:1px solid var(--border);
       border-radius:var(--radius);
-      padding:2.5rem;display:flex;gap:2rem;align-items:flex-start;
-      position:relative;overflow:hidden;cursor:default;
-      transition:transform 0.35s var(--ease),border-color 0.35s,box-shadow 0.35s;
-      /* distinguished: double-layer glow border */
-      box-shadow:0 0 0 1px rgba(200,169,110,0.06), inset 0 1px 0 rgba(200,169,110,0.08);
+      padding:1.8rem;
+      position:relative; overflow:hidden; cursor:default;
+      transition:transform .35s var(--ease),border-color .35s,box-shadow .35s;
     }
-    /* liquid ripple like mod-cards */
+    /* Flowise node handle — top connector dot */
+    .mod-card::before {
+      content:''; position:absolute; top:-1px; left:50%; transform:translateX(-50%);
+      width:8px; height:8px; border-radius:50%;
+      background:var(--fw-teal); border:2px solid var(--wd-navy3);
+      box-shadow:0 0 8px var(--fw-teal-glow);
+      opacity:0; transition:opacity .3s;
+    }
+    /* Liquid ripple */
+    .mod-card::after {
+      content:''; position:absolute;
+      top:var(--my,50%); left:var(--mx,50%);
+      width:0; height:0;
+      background:radial-gradient(circle,rgba(44,105,182,0.1) 0%,transparent 70%);
+      border-radius:50%; transform:translate(-50%,-50%);
+      transition:width .65s var(--ease),height .65s var(--ease),opacity .5s; opacity:0;
+    }
+    .mod-card:hover::before { opacity:1; }
+    .mod-card:hover::after { width:400px; height:400px; opacity:1; }
+    .mod-card:hover {
+      transform:translateY(-4px);
+      border-color:rgba(44,105,182,.4);
+      box-shadow:0 16px 48px rgba(0,0,0,.5), 0 0 0 1px rgba(44,105,182,.12);
+    }
+    /* Top accent line — Workday blue on hover */
+    .mod-card-inner {
+      position:relative; z-index:1;
+    }
+    .mod-card-top {
+      display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:1rem;
+    }
+    .mod-icon { font-size:1.6rem; }
+    .mod-handle {
+      font-family:var(--mono); font-size:.6rem; letter-spacing:.08em; text-transform:uppercase;
+      color:var(--fw-teal); background:var(--fw-teal-dim);
+      border:1px solid rgba(0,212,180,.15);
+      padding:.2rem .55rem; border-radius:3px;
+    }
+    .mod-name { font-size:1.05rem; font-weight:700; color:var(--text); margin-bottom:.5rem; letter-spacing:-.01em; }
+    .mod-desc { font-size:.83rem; color:var(--text-muted); line-height:1.65; }
+    .mod-tag {
+      display:inline-block; margin-top:1rem;
+      font-family:var(--mono); font-size:.6rem; letter-spacing:.1em; text-transform:uppercase;
+      color:var(--wd-blue-lt); background:rgba(44,105,182,.1);
+      border:1px solid rgba(44,105,182,.2); padding:.25rem .65rem; border-radius:3px;
+    }
+
+    /* ============================================
+       FLOWISE AI CARD — Special treatment
+    ============================================ */
+    .ai-card {
+      background:linear-gradient(135deg,rgba(0,212,180,0.06) 0%,rgba(44,105,182,0.08) 50%,rgba(244,153,11,0.05) 100%);
+      border:1px solid rgba(0,212,180,0.25);
+      border-radius:var(--radius); padding:2.5rem;
+      display:flex; gap:2rem; align-items:flex-start;
+      position:relative; overflow:hidden; cursor:default;
+      transition:transform .35s var(--ease),border-color .35s,box-shadow .35s;
+      box-shadow:0 0 0 1px rgba(0,212,180,.06), inset 0 1px 0 rgba(0,212,180,.08);
+    }
+    /* Flowise flow line animation across top */
     .ai-card::before {
-      content:'';position:absolute;
-      top:var(--my,50%);left:var(--mx,50%);
-      width:0;height:0;
-      background:radial-gradient(circle,rgba(200,169,110,0.1) 0%,rgba(79,142,247,0.05) 50%,transparent 70%);
-      border-radius:50%;transform:translate(-50%,-50%);
-      transition:width 0.7s var(--ease),height 0.7s var(--ease),opacity 0.5s;opacity:0;
+      content:''; position:absolute; top:0; left:-100%; right:100%; height:1.5px;
+      background:linear-gradient(90deg,transparent,var(--fw-teal),var(--wd-orange),transparent);
+      transition:left .6s var(--ease),right .6s var(--ease);
     }
-    /* top shimmer bar — gold, not blue, to distinguish */
-    .ai-card::after {
-      content:'';position:absolute;top:0;left:0;right:0;height:1px;
-      background:linear-gradient(90deg,transparent,var(--accent),var(--blue),var(--accent),transparent);
-      transform:scaleX(0);transition:transform 0.5s var(--ease);
+    /* Liquid ripple */
+    .ai-card-ripple {
+      position:absolute;
+      top:var(--my,50%); left:var(--mx,50%);
+      width:0; height:0;
+      background:radial-gradient(circle,rgba(0,212,180,.08) 0%,rgba(44,105,182,.04) 50%,transparent 70%);
+      border-radius:50%; transform:translate(-50%,-50%);
+      transition:width .7s var(--ease),height .7s var(--ease),opacity .5s; opacity:0;
+      pointer-events:none;
     }
-    .ai-card:hover::before { width:600px;height:600px;opacity:1; }
-    .ai-card:hover::after { transform:scaleX(1); }
+    .ai-card:hover::before { left:-5%; right:-5%; }
+    .ai-card:hover .ai-card-ripple { width:700px; height:700px; opacity:1; }
     .ai-card:hover {
       transform:translateY(-5px);
-      border-color:rgba(200,169,110,0.4);
-      box-shadow:0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(200,169,110,0.12), 0 0 40px rgba(200,169,110,0.06);
+      border-color:rgba(0,212,180,.45);
+      box-shadow:0 24px 64px rgba(0,0,0,.5), 0 0 0 1px rgba(0,212,180,.12), 0 0 40px rgba(0,212,180,.06);
     }
-    /* plain emoji, no box — matches other module cards */
-    .ai-icon-wrap {
-      font-size:1.8rem;flex-shrink:0;margin-top:0.1rem;
-      transition:transform 0.3s var(--ease);
-      position:relative;z-index:1;
+    .ai-emoji {
+      font-size:2rem; flex-shrink:0; margin-top:.1rem;
+      position:relative; z-index:1;
+      transition:transform .3s var(--ease);
     }
-    .ai-card:hover .ai-icon-wrap { transform:scale(1.15) rotate(-5deg); }
-    .ai-content { position:relative;z-index:1; }
-    .ai-content h3 {
-      font-family:var(--font-display);font-size:1.6rem;font-weight:700;
-      color:var(--accent);  /* gold title to distinguish from regular modules */
-      margin-bottom:0.5rem;letter-spacing:-0.01em;
+    .ai-card:hover .ai-emoji { transform:scale(1.15) rotate(-5deg); }
+    .ai-body { position:relative; z-index:1; }
+    .ai-body h3 {
+      font-size:1.4rem; font-weight:700; letter-spacing:-.02em;
+      background:linear-gradient(90deg,var(--fw-teal),var(--wd-blue-lt));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      margin-bottom:.5rem;
     }
-    .ai-content p { font-size:0.9rem;color:var(--text-muted);line-height:1.75; }
+    .ai-body p { font-size:.9rem; color:var(--text-muted); line-height:1.75; }
+    .ai-badges { display:flex; gap:.6rem; flex-wrap:wrap; margin-top:1rem; }
     .ai-badge {
-      display:inline-flex;align-items:center;gap:0.4rem;margin-top:1rem;
-      font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;
-      color:var(--accent);background:var(--accent-dim);
-      border:1px solid rgba(200,169,110,0.25);padding:0.3rem 0.9rem;border-radius:3px;
+      display:inline-flex; align-items:center; gap:.35rem;
+      font-family:var(--mono); font-size:.63rem; letter-spacing:.08em; text-transform:uppercase;
+      padding:.28rem .75rem; border-radius:4px;
     }
+    .ai-badge.teal { color:var(--fw-teal); background:var(--fw-teal-dim); border:1px solid rgba(0,212,180,.22); }
+    .ai-badge.orange { color:var(--wd-orange); background:var(--wd-orange-dim); border:1px solid rgba(244,153,11,.22); }
 
     /* ============================================
        RECOGNITION
     ============================================ */
-    #recognition { background:var(--bg2); }
-    .rec-grid { display:grid;grid-template-columns:1fr 1fr;gap:1.2rem; }
+    #recognition { background:var(--wd-navy2); }
+    .rec-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; }
     .rec-card {
-      background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);
-      padding:2rem 2.2rem;display:flex;gap:1.5rem;align-items:flex-start;
-      position:relative;overflow:hidden;transition:all 0.35s var(--ease);
+      background:var(--wd-navy3); border:1px solid var(--border);
+      border-radius:var(--radius); padding:2rem;
+      display:flex; gap:1.5rem; align-items:flex-start;
+      position:relative; overflow:hidden;
+      transition:all .35s var(--ease);
     }
     .rec-card::before {
-      content:'';position:absolute;left:0;top:0;bottom:0;width:2px;
-      background:var(--accent);transform:scaleY(0);transform-origin:bottom;
-      transition:transform 0.4s var(--ease);
+      content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
+      background:linear-gradient(180deg,var(--wd-orange),var(--wd-blue));
+      transform:scaleY(0); transform-origin:bottom; transition:transform .4s var(--ease);
     }
-    .rec-card:hover { transform:translateY(-3px) translateX(4px);border-color:rgba(200,169,110,0.3); }
+    .rec-card:hover { transform:translateY(-3px) translateX(4px); border-color:rgba(244,153,11,.3); }
     .rec-card:hover::before { transform:scaleY(1); }
-    .rec-icon { font-size:2rem;flex-shrink:0;margin-top:0.2rem; }
-    .rec-title { font-family:var(--font-display);font-size:1.25rem;font-weight:600;color:var(--text);margin-bottom:0.3rem; }
-    .rec-sub { font-size:0.82rem;color:var(--text-muted);line-height:1.55; }
-    .rec-year { font-family:var(--font-mono);font-size:0.65rem;color:var(--accent);letter-spacing:0.1em;margin-top:0.6rem; }
+    .rec-icon { font-size:1.8rem; flex-shrink:0; margin-top:.2rem; }
+    .rec-title { font-size:1.05rem; font-weight:700; color:var(--text); margin-bottom:.3rem; }
+    .rec-sub { font-size:.82rem; color:var(--text-muted); line-height:1.55; }
+    .rec-year { font-family:var(--mono); font-size:.63rem; color:var(--wd-orange); letter-spacing:.1em; margin-top:.6rem; }
 
     /* ============================================
-       PROJECTS
+       PROJECTS — Workday card style
     ============================================ */
-    #projects { background:var(--bg); }
-    .projects-wrap { border:1px solid var(--border);border-radius:var(--radius);overflow:hidden; }
+    #projects { background:var(--wd-navy); }
+    .projects-wrap { border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
     .proj-item {
-      display:flex;align-items:center;justify-content:space-between;gap:2rem;
-      padding:1.8rem 2.5rem;border-bottom:1px solid var(--border);background:var(--bg2);
-      position:relative;overflow:hidden;
-      transition:padding-left 0.35s var(--ease),background 0.35s;cursor:default;
+      display:flex; align-items:center; justify-content:space-between; gap:2rem;
+      padding:1.8rem 2.5rem; border-bottom:1px solid var(--border); background:var(--wd-navy2);
+      position:relative; overflow:hidden;
+      transition:padding-left .35s var(--ease),background .35s; cursor:default;
     }
     .proj-item:last-child { border-bottom:none; }
     .proj-item::before {
-      content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
-      background:linear-gradient(180deg,var(--accent),transparent);
-      transform:scaleY(0);transform-origin:top;transition:transform 0.4s var(--ease);
+      content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
+      background:linear-gradient(180deg,var(--wd-orange),var(--wd-blue));
+      transform:scaleY(0); transform-origin:top; transition:transform .4s var(--ease);
     }
     .proj-item::after {
-      content:'';position:absolute;inset:0;
-      background:linear-gradient(90deg,var(--accent-dim),transparent 55%);
-      opacity:0;transition:opacity 0.4s;
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(90deg,rgba(244,153,11,.05),transparent 50%);
+      opacity:0; transition:opacity .4s;
     }
-    .proj-item:hover { padding-left:3.2rem;background:var(--bg3); }
+    .proj-item:hover { padding-left:3.2rem; background:var(--wd-navy3); }
     .proj-item:hover::before { transform:scaleY(1); }
     .proj-item:hover::after { opacity:1; }
-    .proj-left { display:flex;align-items:center;gap:1.5rem;position:relative;z-index:1; }
-    .proj-num { font-family:var(--font-mono);font-size:0.65rem;color:var(--text-dim);letter-spacing:0.1em;min-width:22px;transition:color 0.3s; }
-    .proj-item:hover .proj-num { color:var(--accent); }
-    .proj-name { font-family:var(--font-display);font-size:1.2rem;font-weight:600;color:var(--text);margin-bottom:0.2rem;transition:color 0.3s; }
-    .proj-item:hover .proj-name { color:var(--accent-h); }
-    .proj-desc { font-size:0.82rem;color:var(--text-muted);line-height:1.5;max-width:480px; }
-    .proj-tags { display:flex;gap:0.4rem;flex-wrap:wrap;position:relative;z-index:1; }
+    .proj-left { display:flex; align-items:center; gap:1.5rem; position:relative; z-index:1; }
+    .proj-num { font-family:var(--mono); font-size:.63rem; color:var(--text-dim); letter-spacing:.1em; min-width:22px; transition:color .3s; }
+    .proj-item:hover .proj-num { color:var(--wd-orange); }
+    .proj-name { font-size:1.05rem; font-weight:700; color:var(--text); margin-bottom:.2rem; transition:color .3s; letter-spacing:-.01em; }
+    .proj-item:hover .proj-name { color:var(--wd-orange-lt); }
+    .proj-desc { font-size:.82rem; color:var(--text-muted); line-height:1.5; max-width:480px; }
+    .proj-tags { display:flex; gap:.4rem; flex-wrap:wrap; position:relative; z-index:1; }
     .ptag {
-      font-family:var(--font-mono);font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;
-      color:var(--accent);background:var(--accent-dim);
-      border:1px solid rgba(200,169,110,0.18);padding:0.22rem 0.6rem;border-radius:3px;white-space:nowrap;
+      font-family:var(--mono); font-size:.6rem; letter-spacing:.08em; text-transform:uppercase;
+      color:var(--wd-blue-lt); background:rgba(44,105,182,.1);
+      border:1px solid rgba(44,105,182,.18); padding:.22rem .6rem; border-radius:3px; white-space:nowrap;
     }
-    .ptag.blue { color:var(--blue);background:var(--blue-dim);border-color:rgba(79,142,247,0.2); }
+    .ptag.orange { color:var(--wd-orange); background:var(--wd-orange-dim); border-color:rgba(244,153,11,.2); }
+    .ptag.teal { color:var(--fw-teal); background:var(--fw-teal-dim); border-color:rgba(0,212,180,.2); }
 
     /* ============================================
        CONTACT
     ============================================ */
-    #contact { background:var(--bg2);text-align:center; }
-    .contact-inner { max-width:580px;margin:0 auto; }
+    #contact { background:var(--wd-navy2); text-align:center; }
+    .contact-inner { max-width:560px; margin:0 auto; }
     .contact-inner .s-label { justify-content:center; }
-    .contact-tagline { font-size:0.97rem;color:var(--text-muted);line-height:1.8;margin-bottom:2.5rem; }
-    .contact-btns { display:flex;gap:1rem;justify-content:center;flex-wrap:wrap; }
+    .contact-tagline { font-size:.97rem; color:var(--text-muted); line-height:1.8; margin-bottom:2.5rem; }
+    .contact-btns { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; }
     .contact-link {
-      display:inline-flex;align-items:center;gap:0.6rem;
-      padding:0.85rem 1.8rem;border:1px solid var(--border);border-radius:var(--radius);
-      font-size:0.84rem;color:var(--text-muted);position:relative;overflow:hidden;
-      transition:color 0.3s var(--ease),border-color 0.3s var(--ease),transform 0.3s var(--ease),box-shadow 0.3s var(--ease);
+      display:inline-flex; align-items:center; gap:.6rem;
+      padding:.85rem 1.8rem; border:1px solid var(--border); border-radius:var(--radius);
+      font-size:.84rem; color:var(--text-muted);
+      position:relative; overflow:hidden;
+      transition:color .3s var(--ease),border-color .3s,transform .3s,box-shadow .3s;
     }
     .contact-link::before {
-      content:'';position:absolute;
-      top:50%;left:50%;width:0;height:0;
-      background:rgba(200,169,110,0.12);
-      border-radius:50%;transform:translate(-50%,-50%);
-      transition:width 0.65s var(--ease),height 0.65s var(--ease);z-index:0;
+      content:''; position:absolute; top:50%; left:50%; width:0; height:0;
+      background:rgba(244,153,11,.1); border-radius:50%;
+      transform:translate(-50%,-50%);
+      transition:width .65s var(--ease),height .65s var(--ease); z-index:0;
     }
-    .contact-link span { position:relative;z-index:1; }
-    .contact-link:hover { border-color:var(--accent);color:var(--accent);transform:translateY(-2px); }
-    .contact-link:hover::before { width:400px;height:400px; }
+    .contact-link span { position:relative; z-index:1; }
+    .contact-link:hover { border-color:rgba(244,153,11,.4); color:var(--wd-orange); transform:translateY(-2px); }
+    .contact-link:hover::before { width:400px; height:400px; }
     .contact-link.primary {
-      background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:500;
+      background:var(--wd-orange); border-color:var(--wd-orange); color:#fff; font-weight:600;
     }
-    .contact-link.primary::before { background:rgba(255,255,255,0.2); }
-    .contact-link.primary:hover { color:var(--bg);box-shadow:0 12px 32px rgba(200,169,110,0.32);transform:translateY(-2px); }
+    .contact-link.primary::before { background:rgba(255,255,255,.2); }
+    .contact-link.primary:hover { color:#fff; box-shadow:0 10px 28px rgba(244,153,11,.4); }
 
     /* ============================================
        FOOTER
     ============================================ */
     footer {
-      position:relative;z-index:10;padding:2rem 4rem;
-      display:flex;align-items:center;justify-content:space-between;
+      position:relative; z-index:10; padding:1.8rem 4rem;
+      display:flex; align-items:center; justify-content:space-between;
       border-top:1px solid var(--border);
+      background:var(--wd-navy);
     }
-    .footer-logo { font-family:var(--font-display);font-size:1rem;color:var(--accent);font-weight:600; }
-    .footer-copy { font-family:var(--font-mono);font-size:0.7rem;color:var(--text-dim);letter-spacing:0.06em; }
+    /* Workday sunrise footer arch */
+    footer::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:1px;
+      background:linear-gradient(90deg,transparent,var(--wd-orange) 30%,var(--wd-blue) 60%,transparent);
+      opacity:.4;
+    }
+    .footer-brand { display:flex; align-items:center; gap:.6rem; }
+    .footer-name { font-size:.95rem; font-weight:700; color:var(--text); }
+    .footer-role { font-size:.72rem; color:var(--text-muted); }
+    .footer-copy { font-family:var(--mono); font-size:.68rem; color:var(--text-dim); letter-spacing:.06em; }
 
     /* ============================================
        ANIMATIONS
     ============================================ */
-    @keyframes slideUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
-    @keyframes slideLeft { from{opacity:0;transform:translateX(28px)} to{opacity:1;transform:translateX(0)} }
-    .reveal { opacity:0;transform:translateY(28px);transition:opacity 0.75s var(--ease),transform 0.75s var(--ease); }
-    .reveal.visible { opacity:1;transform:translateY(0); }
-    .d1{transition-delay:0.1s}.d2{transition-delay:0.2s}.d3{transition-delay:0.3s}.d4{transition-delay:0.4s}
+    @keyframes slideUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes slideLeft { from{opacity:0;transform:translateX(24px)} to{opacity:1;transform:translateX(0)} }
+    .reveal { opacity:0; transform:translateY(24px); transition:opacity .75s var(--ease),transform .75s var(--ease); }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+    .d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}
 
     /* ============================================
        RESPONSIVE
     ============================================ */
     @media(max-width:1100px){
-      .hero-cards{display:none}
+      .hero-stats{display:none}
       .about-grid{grid-template-columns:1fr;gap:3rem}
       .rec-grid{grid-template-columns:1fr}
     }
     @media(max-width:768px){
-      nav{padding:1rem 1.5rem}
+      nav{padding:0 1.5rem}
       .nav-links{display:none}
       section{padding:4rem 1.5rem}
-      .hero{padding:7rem 1.5rem 4rem}
+      .hero{padding:6rem 1.5rem 4rem}
       .divider{margin:0 1.5rem}
       .modules-grid{grid-template-columns:1fr}
       .proj-item{flex-direction:column;align-items:flex-start}
-      footer{padding:1.5rem;flex-direction:column;gap:0.5rem;text-align:center}
+      footer{padding:1.5rem;flex-direction:column;gap:.5rem;text-align:center}
       .cursor,.cursor-ring{display:none}
       body{cursor:auto}
     }
@@ -533,21 +631,24 @@
 </head>
 <body>
 
-  <div class="liquid-bg">
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-    <div class="blob blob-3"></div>
-  </div>
-  <div class="grid-texture"></div>
+  <!-- Flowise node graph background — drawn by JS -->
+  <div class="flow-canvas" id="flowCanvas"></div>
+  <div class="sunrise-glow"></div>
   <div class="grain"></div>
 
+  <!-- Cursor -->
   <div class="cursor" id="cursor"></div>
   <div class="cursor-ring" id="cursorRing"></div>
   <div class="scroll-bar" id="scrollBar"></div>
 
-  <!-- NAV -->
+  <!-- ==================== NAV ==================== -->
   <nav>
-    <div class="nav-logo">Sudharsan G</div>
+    <div class="nav-logo">
+      <div>
+        <div class="nav-name">Sudharsan G</div>
+        <div class="nav-role">Workday Functional Engineer</div>
+      </div>
+    </div>
     <ul class="nav-links">
       <li><a href="#about">About</a></li>
       <li><a href="#expertise">Expertise</a></li>
@@ -558,64 +659,81 @@
     <a href="https://www.linkedin.com/in/sudharsan-g-9a2117109/" target="_blank" class="nav-cta"><span>LinkedIn ↗</span></a>
   </nav>
 
-  <!-- HERO -->
+  <!-- ==================== HERO ==================== -->
   <section class="hero" id="home">
-    <div class="hero-glow"></div>
+    <!-- Stunning animated hero canvas -->
+    <canvas id="heroCanvas" style="position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;"></canvas>
+    <!-- Radial sunrise bloom overlay -->
+    <div style="position:absolute;inset:0;z-index:1;pointer-events:none;
+      background:
+        radial-gradient(ellipse 55% 70% at 75% 55%, rgba(244,153,11,0.10) 0%, transparent 65%),
+        radial-gradient(ellipse 40% 50% at 70% 45%, rgba(44,105,182,0.10) 0%, transparent 60%),
+        radial-gradient(ellipse 30% 40% at 80% 50%, rgba(244,153,11,0.06) 0%, transparent 50%);
+    "></div>
     <div class="hero-content">
       <div class="hero-eyebrow">
         <div class="eyebrow-dot"></div>
-        <div class="eyebrow-line"></div>
+        <div class="eyebrow-dash"></div>
         Workday Functional Engineer
       </div>
-      <h1 class="hero-name">Sudharsan <em>G</em></h1>
-      <p class="hero-subtitle">HCM · Security · Time & Absence · Agentic AI</p>
+      <h1 class="hero-name">
+        <span class="first">Sudharsan </span><span class="last">G</span><br>
+      </h1>
+      <p class="hero-title">
+        HCM<span class="sep">·</span>Security<span class="sep">·</span>Time & Absence<span class="sep">·</span>Agentic AI
+      </p>
+      <div class="hero-cert">
+        <div class="cert-dot"></div>
+        Workday Pro HCM Certified
+      </div>
       <p class="hero-desc">
-        3 years of deep Workday functional expertise combined with hands-on Flowise and agentic AI experience — bridging enterprise HR technology with next-generation intelligent automation.
+        3+ years of deep Workday functional expertise combined with hands-on Flowise and agentic AI experience — bridging enterprise HR technology with next-generation intelligent innovation.
       </p>
       <div class="hero-actions">
-        <a href="#projects" class="btn-liquid"><span>View Projects →</span></a>
-        <a href="https://www.linkedin.com/in/sudharsan-g-9a2117109/" target="_blank" class="btn-ghost">LinkedIn ↗</a>
+        <a href="#projects" class="btn-primary"><span>View Projects →</span></a>
+        <a href="https://www.linkedin.com/in/sudharsan-g-9a2117109/" target="_blank" class="btn-secondary"><span>LinkedIn ↗</span></a>
       </div>
     </div>
-    <div class="hero-cards">
-      <div class="h-card">
-        <div class="h-card-label">Experience</div>
-        <div class="h-card-value">3 Yrs</div>
-        <div class="h-card-sub">Workday Functional</div>
+
+    <div class="hero-stats">
+      <div class="h-stat">
+        <div class="h-stat-label">Experience</div>
+        <div class="h-stat-value">3+ Years</div>
+        <div class="h-stat-sub">Workday Functional</div>
       </div>
-      <div class="h-card">
-        <div class="h-card-label">Certification</div>
-        <div class="h-card-value">Pro HCM</div>
-        <div class="h-card-sub">Workday Certified</div>
+      <div class="h-stat">
+        <div class="h-stat-label">Certification</div>
+        <div class="h-stat-value">Pro HCM</div>
+        <div class="h-stat-sub">Workday Certified</div>
       </div>
-      <div class="h-card">
-        <div class="h-card-label">Recognition</div>
-        <div class="h-card-value">2× Award</div>
-        <div class="h-card-sub">Exceptional Contributor</div>
+      <div class="h-stat">
+        <div class="h-stat-label">Recognition</div>
+        <div class="h-stat-value">2× Award</div>
+        <div class="h-stat-sub">Exceptional Contributor</div>
       </div>
     </div>
   </section>
 
   <div class="divider"></div>
 
-  <!-- ABOUT -->
+  <!-- ==================== ABOUT ==================== -->
   <section id="about">
     <div class="about-grid">
       <div class="about-text reveal">
         <div class="s-label">About Me</div>
-        <h2 class="s-title">Functional depth meets <strong>AI innovation</strong></h2>
-        <p>I'm a Workday Functional Engineer with <strong>3 years of hands-on experience</strong> across core enterprise HR modules — HCM, Security, and Time & Absence. My work focuses on translating complex business requirements into scalable, efficient Workday configurations.</p>
-        <p>What sets me apart is my early adoption of <strong>Flowise and agentic AI capabilities</strong> — enabling me to bridge traditional HR technology with intelligent automation. With Workday's acquisition of Flowise, this intersection is now at the forefront of the industry.</p>
+        <h2 class="s-title">Functional depth meets <span class="hl">AI innovation</span></h2>
+        <p>I'm a Workday Functional Engineer with <strong>3+ years of hands-on experience</strong> across core enterprise HR modules — HCM, Security, and Time & Absence. My work focuses on translating complex business requirements into scalable, efficient <span class="orange">Workday</span> configurations.</p>
+        <p>What sets me apart is my <strong> functional depth and the ability to connect dots</strong> across functional areas along with the early adoption of <span class="teal">Flowise and agentic AI capabilities</span> — enabling me to bridge traditional Workday processes with intelligent innovation. With Workday's acquisition of Flowise, this intersection is now at the forefront of the industry.</p>
         <p>I hold a <strong>Workday Pro HCM Certification</strong> and have been recognized as an <strong>Exceptional Contributor</strong> within my Workday functional team — a testament to the impact-driven approach I bring to every engagement.</p>
       </div>
       <div class="stat-grid reveal d2">
         <div class="stat-card">
-          <div class="stat-num">3</div>
+          <div class="stat-num">3+</div>
           <div class="stat-lbl">Years of Workday Functional Experience</div>
         </div>
         <div class="stat-card">
           <div class="stat-num">4+</div>
-          <div class="stat-lbl">Workday Modules across HCM, Security & Time</div>
+          <div class="stat-lbl">Workday Modules across HCM, Security, Time & Absence</div>
         </div>
         <div class="stat-card">
           <div class="stat-num">2×</div>
@@ -625,64 +743,108 @@
           <div class="stat-num">Pro</div>
           <div class="stat-lbl">Workday HCM Certified Professional</div>
         </div>
+        <div class="stat-card">
+          <div class="stat-num">Platinum</div>
+          <div class="stat-lbl">AZ AI Accrediation Programme</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">1st</div>
+          <div class="stat-lbl">ARAI Hackathon Winner</div>
+        </div>
       </div>
     </div>
   </section>
 
   <div class="divider"></div>
 
-  <!-- EXPERTISE -->
+  <!-- ==================== EXPERTISE ==================== -->
   <section id="expertise">
     <div class="s-label reveal">Core Expertise</div>
-    <h2 class="s-title reveal d1">Modules & <strong>Capabilities</strong></h2>
+    <h2 class="s-title reveal d1">Modules & <span class="hl-blue">Capabilities</span></h2>
+
+    <!-- Flowise node connector bar -->
+    <div class="node-bar reveal d2">
+      <div class="node-dot"></div>
+      <div class="node-line"></div>
+      <div class="node-label">Workday Modules</div>
+      <div class="node-line" style="background:linear-gradient(90deg,rgba(0,212,180,.15),var(--fw-teal))"></div>
+      <div class="node-dot"></div>
+    </div>
+
     <div class="modules-grid">
-      <div class="mod-card reveal d1">
-        <div class="mod-icon">👤</div>
-        <div class="mod-name">Human Capital Management</div>
-        <div class="mod-desc">End-to-end HCM configuration including workforce management, organizational structures, compensation, and employee lifecycle processes within the Workday platform.</div>
-        <span class="mod-tag">Workday HCM</span>
+      <div class="mod-card reveal d1" id="mc1">
+        <div class="mod-card-inner">
+          <div class="mod-card-top">
+            <div class="mod-icon">👤</div>
+            <span class="mod-handle">HCM</span>
+          </div>
+          <div class="mod-name">Human Capital Management</div>
+          <div class="mod-desc">End-to-end Core HCM configuration, optimization, automation scopes starting from hire to retire processes within the Workday platform.</div>
+          <span class="mod-tag">Workday HCM</span>
+        </div>
       </div>
-      <div class="mod-card reveal d2">
-        <div class="mod-icon">🔐</div>
-        <div class="mod-name">Workday Security</div>
-        <div class="mod-desc">Deep expertise in Workday security architecture — designing and maintaining role-based access controls, security groups, domain policies, and audit compliance frameworks.</div>
-        <span class="mod-tag">Security Framework</span>
+      <div class="mod-card reveal d2" id="mc2">
+        <div class="mod-card-inner">
+          <div class="mod-card-top">
+            <div class="mod-icon">🔐</div>
+            <span class="mod-handle">SECURITY</span>
+          </div>
+          <div class="mod-name">Workday Security</div>
+          <div class="mod-desc">Deep expertise in Workday security architecture — designing and maintaining security access controls, security groups, domain/BP policies, authentication policies, proxy policies, SSO configuration and audit compliance frameworks.</div>
+          <span class="mod-tag">Security Framework</span>
+        </div>
       </div>
-      <div class="mod-card reveal d3">
-        <div class="mod-icon">🕐</div>
-        <div class="mod-name">Time Tracking</div>
-        <div class="mod-desc">Configuration of time entry, calculation rules, overtime policies, and period schedules — ensuring accurate workforce time data aligned with complex business and payroll requirements.</div>
-        <span class="mod-tag">Time Tracking</span>
+      <div class="mod-card reveal d3" id="mc3">
+        <div class="mod-card-inner">
+          <div class="mod-card-top">
+            <div class="mod-icon">🕐</div>
+            <span class="mod-handle">TIME</span>
+          </div>
+          <div class="mod-name">Time Tracking</div>
+          <div class="mod-desc">End-toend configuration of time entry components, time calculations, time entry validations, mass approvals/submissions and period schedules — ensuring accurate workforce time data aligned with complex business and payroll requirements.</div>
+          <span class="mod-tag">Time Tracking</span>
+        </div>
       </div>
-      <div class="mod-card reveal d4">
-        <div class="mod-icon">📅</div>
-        <div class="mod-name">Absence Management</div>
-        <div class="mod-desc">End-to-end absence configuration including leave types, accrual plans, carry-forward rules, and regional compliance — supporting multi-country absence frameworks within Workday.</div>
-        <span class="mod-tag">Absence Management</span>
+      <div class="mod-card reveal d4" id="mc4">
+        <div class="mod-card-inner">
+          <div class="mod-card-top">
+            <div class="mod-icon">📅</div>
+            <span class="mod-handle">ABSENCE</span>
+          </div>
+          <div class="mod-name">Absence Management</div>
+          <div class="mod-desc">End-to-end absence configuration of absence types, time off plan components, leave components, MOM operations and regional compliance — supporting multi-country absence frameworks within Workday.</div>
+          <span class="mod-tag">Absence Management</span>
+        </div>
       </div>
     </div>
+
+    <!-- Flowise AI card -->
     <div class="ai-card reveal" id="aiCard">
-      <div class="ai-icon-wrap">🤖</div>
-      <div class="ai-content">
+      <div class="ai-card-ripple" id="aiRipple"></div>
+      <div class="ai-emoji">🤖</div>
+      <div class="ai-body">
         <h3>Flowise & Agentic AI</h3>
-        <p>Hands-on experience building intelligent HR automation workflows using Flowise — including a dedicated <strong>Time & Absence AI Assistant</strong>. With Workday's recent acquisition of Flowise, this expertise positions me at the cutting edge of where enterprise HR technology is heading. I bring the rare ability to bridge deep functional Workday knowledge with next-generation AI agent development.</p>
-        <span class="ai-badge">⚡ Workday-acquired Technology</span>
+        <p>Hands-on experience building intelligent HR innovation agentflows using Flowise — including a dedicated <strong>Time & Absence - PS Agentic AI Assistant</strong>. With Workday's recent acquisition of Flowise, this expertise positions me at the cutting edge of where enterprise Workday technology is heading. I bring the rare ability to bridge deep functional Workday knowledge with next-generation AI agent development.</p>
+        <div class="ai-badges">
+          <span class="ai-badge teal">⚡ Workday-acquired Technology</span>
+          <span class="ai-badge orange">🌐 Agentic AI</span>
+        </div>
       </div>
     </div>
   </section>
 
   <div class="divider"></div>
 
-  <!-- RECOGNITION -->
+  <!-- ==================== RECOGNITION ==================== -->
   <section id="recognition">
     <div class="s-label reveal">Recognition</div>
-    <h2 class="s-title reveal d1">Certifications & <strong>Awards</strong></h2>
+    <h2 class="s-title reveal d1">Certifications & <span class="hl">Awards</span></h2>
     <div class="rec-grid">
       <div class="rec-card reveal d1">
         <div class="rec-icon">🏅</div>
         <div>
           <div class="rec-title">Workday Pro HCM Certification</div>
-          <div class="rec-sub">Official Workday certification validating advanced functional expertise in Human Capital Management configuration and implementation.</div>
+          <div class="rec-sub">Workday pro certification validating advanced functional expertise in the Core Human Capital Management configurations.</div>
           <div class="rec-year">WORKDAY CERTIFIED</div>
         </div>
       </div>
@@ -699,10 +861,10 @@
 
   <div class="divider"></div>
 
-  <!-- PROJECTS -->
+  <!-- ==================== PROJECTS ==================== -->
   <section id="projects">
     <div class="s-label reveal">Featured Work</div>
-    <h2 class="s-title reveal d1">Key <strong>Projects</strong></h2>
+    <h2 class="s-title reveal d1">Key <span class="hl">Projects</span></h2>
     <div class="projects-wrap reveal d2">
 
       <div class="proj-item">
@@ -710,10 +872,10 @@
           <span class="proj-num">01</span>
           <div>
             <div class="proj-name">HR Process Optimization</div>
-            <div class="proj-desc">Streamlined core HR workflows within Workday, improving operational efficiency and reducing process cycle times across the organization.</div>
+            <div class="proj-desc">Streamlined, Optimized HR workflows within Workday, improving operational efficiency and reducing process cycle times across the organization.</div>
           </div>
         </div>
-        <div class="proj-tags"><span class="ptag">HCM</span><span class="ptag">Process Design</span></div>
+        <div class="proj-tags"><span class="ptag">HCM</span><span class="ptag orange">Process Optimization</span></div>
       </div>
 
       <div class="proj-item">
@@ -721,10 +883,10 @@
           <span class="proj-num">02</span>
           <div>
             <div class="proj-name">Severance — US & Sweden</div>
-            <div class="proj-desc">Configured country-specific severance processes for the US and Sweden, ensuring compliance with regional legal and HR policy requirements.</div>
+            <div class="proj-desc">Configured market-specific severance processes for the US and Sweden, ensuring compliance with regional legal and HR policy requirements.</div>
           </div>
         </div>
-        <div class="proj-tags"><span class="ptag">HCM</span><span class="ptag">US & SE</span><span class="ptag">Compliance</span></div>
+        <div class="proj-tags"><span class="ptag">HCM</span><span class="ptag orange">US & SE</span><span class="ptag">Compliance</span></div>
       </div>
 
       <div class="proj-item">
@@ -732,32 +894,32 @@
           <span class="proj-num">03</span>
           <div>
             <div class="proj-name">Terminee as Self</div>
-            <div class="proj-desc">Designed a self-service termination workflow enabling employees to initiate and manage their own offboarding process seamlessly within Workday.</div>
+            <div class="proj-desc">Developed a self-service functionality for the terminated workers to login back to Workday to retrieve key documents seamlessly without depending the HR.</div>
           </div>
         </div>
-        <div class="proj-tags"><span class="ptag">HCM</span><span class="ptag">Self-Service</span><span class="ptag">Workflow</span></div>
+        <div class="proj-tags"><span class="ptag">HCM</span><span class="ptag orange">Self-Service</span><span class="ptag">Workflow</span></div>
       </div>
 
       <div class="proj-item">
         <div class="proj-left">
           <span class="proj-num">04</span>
           <div>
-            <div class="proj-name">Time & Absence — Country Setup</div>
-            <div class="proj-desc">Led end-to-end Time Tracking and Absence Management implementation for a country-specific rollout — configuring leave policies, accrual plans, and time rules aligned with local compliance standards.</div>
+            <div class="proj-name">Time & Absence - Market Rollouts</div>
+            <div class="proj-desc">Led end-to-end Time Tracking and Absence Management implementation for market-specific rollouts — configurations aligned with local HR policies, and compliance standards.</div>
           </div>
         </div>
-        <div class="proj-tags"><span class="ptag">Time Tracking</span><span class="ptag">Absence</span><span class="ptag">Compliance</span></div>
+        <div class="proj-tags"><span class="ptag">Time Tracking</span><span class="ptag">Absence</span><span class="ptag orange">Compliance</span></div>
       </div>
 
       <div class="proj-item">
         <div class="proj-left">
           <span class="proj-num">05</span>
           <div>
-            <div class="proj-name">Flowise — Time & Absence AI Assistant</div>
-            <div class="proj-desc">Built an intelligent agentic AI assistant using Flowise to automate Time & Absence queries — enabling natural language interactions with Workday HR data.</div>
+            <div class="proj-name">Flowise — Time & Absence - PS Agentic AI Assistant</div>
+            <div class="proj-desc">Built an intelligent agentic AI assistant using Flowise to automate Time & Absence queries — enabling natural language interactions with Workday HR data that reduces huge volume of manual efforts and BAU tickets to the HRIT and the HR teams.</div>
           </div>
         </div>
-        <div class="proj-tags"><span class="ptag blue">Flowise AI</span><span class="ptag blue">Agentic AI</span><span class="ptag">Time & Absence</span></div>
+        <div class="proj-tags"><span class="ptag teal">Flowise AI</span><span class="ptag teal">Agentic AI</span><span class="ptag orange">Time & Absence</span></div>
       </div>
 
     </div>
@@ -765,12 +927,12 @@
 
   <div class="divider"></div>
 
-  <!-- CONTACT -->
+  <!-- ==================== CONTACT ==================== -->
   <section id="contact">
     <div class="contact-inner reveal">
       <div class="s-label" style="justify-content:center;">Get In Touch</div>
-      <h2 class="s-title" style="margin-bottom:1rem;">Let's <strong>Connect</strong></h2>
-      <p class="contact-tagline">Open to Workday functional consulting opportunities — remote and across India. Whether you're a recruiter, partner firm, or fellow Workday professional, I'd love to connect.</p>
+      <h2 class="s-title" style="margin-bottom:1rem;">Let's <span class="hl">Connect</span></h2>
+      <p class="contact-tagline">Open to networking🙂 Whether you're a fellow Workday/Flowise professional, customer firm, or partner firm, I'd love to connect.</p>
       <div class="contact-btns">
         <a href="https://www.linkedin.com/in/sudharsan-g-9a2117109/" target="_blank" class="contact-link primary">
           <span>Connect on LinkedIn ↗</span>
@@ -780,70 +942,294 @@
     </div>
   </section>
 
-  <!-- FOOTER -->
+  <!-- ==================== FOOTER ==================== -->
   <footer>
-    <div class="footer-logo">Sudharsan G</div>
-    <div class="footer-copy">© 2025 · Workday Functional Engineer · Chennai, India</div>
+    <div class="footer-brand">
+      <div>
+        <div class="footer-name">Sudharsan G</div>
+        <div class="footer-role">Workday Functional Engineer · Chennai</div>
+      </div>
+    </div>
+    <div class="footer-copy">© 2026 · Built with Workday + Flowise expertise</div>
   </footer>
 
   <script>
-    // Cursor
+    // ── Custom cursor ──────────────────────────────
     const cur = document.getElementById('cursor');
     const ring = document.getElementById('cursorRing');
     let mx=0,my=0,rx=0,ry=0;
-    document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
-    function tickCursor() {
-      cur.style.left=mx+'px'; cur.style.top=my+'px';
-      rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12;
-      ring.style.left=rx+'px'; ring.style.top=ry+'px';
-      requestAnimationFrame(tickCursor);
+    document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+    (function tick(){
+      cur.style.left=mx+'px';cur.style.top=my+'px';
+      rx+=(mx-rx)*.12;ry+=(my-ry)*.12;
+      ring.style.left=rx+'px';ring.style.top=ry+'px';
+      requestAnimationFrame(tick);
+    })();
+    document.querySelectorAll('a,button').forEach(el=>{
+      el.addEventListener('mouseenter',()=>document.body.classList.add('cursor-expand'));
+      el.addEventListener('mouseleave',()=>document.body.classList.remove('cursor-expand'));
+    });
+
+    // ── Scroll bar ─────────────────────────────────
+    const sb=document.getElementById('scrollBar');
+    window.addEventListener('scroll',()=>{
+      sb.style.transform=`scaleX(${window.scrollY/(document.body.scrollHeight-window.innerHeight)})`;
+    });
+
+    // ── Scroll reveal ──────────────────────────────
+    const obs=new IntersectionObserver(entries=>{
+      entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});
+    },{threshold:.1});
+    document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+    // ── Liquid ripple — module cards ───────────────
+    document.querySelectorAll('.mod-card').forEach(card=>{
+      card.addEventListener('mousemove',e=>{
+        const r=card.getBoundingClientRect();
+        card.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');
+        card.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%');
+      });
+    });
+
+    // ── Liquid ripple — ai card ────────────────────
+    const aiCard=document.getElementById('aiCard');
+    const aiRipple=document.getElementById('aiRipple');
+    if(aiCard){
+      aiCard.addEventListener('mousemove',e=>{
+        const r=aiCard.getBoundingClientRect();
+        aiRipple.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');
+        aiRipple.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%');
+        aiCard.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');
+        aiCard.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%');
+      });
     }
-    tickCursor();
-    document.querySelectorAll('a,button').forEach(el => {
-      el.addEventListener('mouseenter', () => document.body.classList.add('cursor-expand'));
-      el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-expand'));
-    });
 
-    // Scroll bar
-    const sb = document.getElementById('scrollBar');
-    window.addEventListener('scroll', () => {
-      sb.style.transform = `scaleX(${window.scrollY/(document.body.scrollHeight-window.innerHeight)})`;
-    });
+    // ── Hero Canvas Animation ──────────────────────
+    (function initHeroCanvas() {
+      const canvas = document.getElementById('heroCanvas');
+      const ctx = canvas.getContext('2d');
+      let W, H, particles, orbs, arcs;
+      let mouse = { x: -9999, y: -9999 };
+      let raf;
 
-    // Reveal on scroll
-    const obs = new IntersectionObserver(entries => {
-      entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
-    }, {threshold:0.1});
-    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-
-    // Liquid ripple tracking on module cards
-    document.querySelectorAll('.mod-card').forEach(card => {
-      card.addEventListener('mousemove', e => {
-        const r = card.getBoundingClientRect();
-        card.style.setProperty('--mx', ((e.clientX-r.left)/r.width*100)+'%');
-        card.style.setProperty('--my', ((e.clientY-r.top)/r.height*100)+'%');
+      // Track mouse for subtle parallax
+      document.querySelector('.hero').addEventListener('mousemove', e => {
+        const r = canvas.getBoundingClientRect();
+        mouse.x = e.clientX - r.left;
+        mouse.y = e.clientY - r.top;
       });
-    });
 
-    // Same liquid ripple for ai-card
-    const aiCard = document.getElementById('aiCard');
-    if(aiCard) {
-      aiCard.addEventListener('mousemove', e => {
-        const r = aiCard.getBoundingClientRect();
-        aiCard.style.setProperty('--mx', ((e.clientX-r.left)/r.width*100)+'%');
-        aiCard.style.setProperty('--my', ((e.clientY-r.top)/r.height*100)+'%');
-      });
-    }
+      function resize() {
+        const hero = document.querySelector('.hero');
+        W = canvas.width  = hero.offsetWidth;
+        H = canvas.height = hero.offsetHeight;
+        init();
+      }
 
-    // Blobs drift with mouse
-    const blobs = document.querySelectorAll('.blob');
-    document.addEventListener('mousemove', e => {
-      const xP = (e.clientX/window.innerWidth-0.5)*35;
-      const yP = (e.clientY/window.innerHeight-0.5)*35;
-      blobs.forEach((b,i) => {
-        b.style.transform=`translate(${xP*(i+1)*0.35}px,${yP*(i+1)*0.35}px)`;
+      // ── Particle system ──────────────────────────
+      function init() {
+        // Small star-like particles
+        particles = Array.from({ length: 110 }, () => ({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          r: 0.4 + Math.random() * 1.4,
+          vx: (Math.random() - 0.5) * 0.22,
+          vy: (Math.random() - 0.5) * 0.18,
+          alpha: 0.2 + Math.random() * 0.6,
+          pulse: Math.random() * Math.PI * 2,
+          pulseSpeed: 0.005 + Math.random() * 0.012,
+          color: Math.random() > 0.45
+            ? `244,153,11`   // Workday orange
+            : Math.random() > 0.5
+              ? `44,105,182`  // Workday blue
+              : `0,212,180`   // Flowise teal
+        }));
+
+        // Large glowing orbs — slow drifting light sources
+        orbs = [
+          { x: W * 0.75, y: H * 0.45, r: 220, vx: 0.18, vy: 0.10, color: '244,153,11', alpha: 0.055 },
+          { x: W * 0.60, y: H * 0.30, r: 180, vx: -0.12, vy: 0.14, color: '44,105,182',  alpha: 0.065 },
+          { x: W * 0.85, y: H * 0.65, r: 160, vx: -0.15, vy: -0.08, color: '244,153,11', alpha: 0.040 },
+          { x: W * 0.50, y: H * 0.70, r: 140, vx: 0.10, vy: -0.12, color: '0,212,180',  alpha: 0.035 },
+        ];
+
+        // Sunrise arc strokes — Workday style, slowly rotating
+        arcs = Array.from({ length: 5 }, (_, i) => ({
+          cx: W * 0.78,
+          cy: H * 1.05,
+          radiusBase: H * (0.55 + i * 0.18),
+          startAngle: Math.PI * 1.05,
+          endAngle:   Math.PI * 1.95,
+          speed: 0.00008 + i * 0.00004,
+          offset: i * 0.3,
+          alpha: 0.06 - i * 0.008,
+          color: i % 2 === 0 ? '244,153,11' : '44,105,182',
+          width: 1.2 - i * 0.15
+        }));
+      }
+
+      // ── Draw loop ─────────────────────────────────
+      function draw(t) {
+        ctx.clearRect(0, 0, W, H);
+
+        // ① Glowing orbs (depth layer — behind everything)
+        orbs.forEach(o => {
+          // Drift
+          o.x += o.vx; o.y += o.vy;
+          if (o.x < -o.r) o.x = W + o.r;
+          if (o.x > W + o.r) o.x = -o.r;
+          if (o.y < -o.r) o.y = H + o.r;
+          if (o.y > H + o.r) o.y = -o.r;
+
+          // Subtle mouse parallax
+          const px = (mouse.x / W - 0.5) * 18;
+          const py = (mouse.y / H - 0.5) * 12;
+
+          const g = ctx.createRadialGradient(
+            o.x + px * 0.3, o.y + py * 0.3, 0,
+            o.x + px * 0.3, o.y + py * 0.3, o.r
+          );
+          g.addColorStop(0,   `rgba(${o.color},${o.alpha})`);
+          g.addColorStop(0.5, `rgba(${o.color},${o.alpha * 0.4})`);
+          g.addColorStop(1,   `rgba(${o.color},0)`);
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.arc(o.x + px * 0.3, o.y + py * 0.3, o.r, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        // ② Sunrise arcs — Workday motif
+        arcs.forEach((a, i) => {
+          a.offset += a.speed;
+          const px = (mouse.x / W - 0.5) * 24;
+          const py = (mouse.y / H - 0.5) * 16;
+          const pulse = 1 + Math.sin(t * 0.0004 + i) * 0.015;
+
+          ctx.save();
+          ctx.strokeStyle = `rgba(${a.color},${a.alpha})`;
+          ctx.lineWidth = a.width;
+          ctx.beginPath();
+          ctx.arc(
+            a.cx + px * (0.1 + i * 0.05),
+            a.cy + py * (0.1 + i * 0.05),
+            a.radiusBase * pulse,
+            a.startAngle + a.offset,
+            a.endAngle + a.offset
+          );
+          ctx.stroke();
+          ctx.restore();
+        });
+
+        // ③ Particle connection lines
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 130) {
+              const op = (1 - dist / 130) * 0.12;
+              const c = particles[i].color;
+              ctx.strokeStyle = `rgba(${c},${op})`;
+              ctx.lineWidth = 0.5;
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.stroke();
+            }
+          }
+        }
+
+        // ④ Particles
+        particles.forEach(p => {
+          p.x += p.vx; p.y += p.vy;
+          p.pulse += p.pulseSpeed;
+
+          // Subtle mouse attraction
+          const dx = mouse.x - p.x;
+          const dy = mouse.y - p.y;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          if (d < 160) {
+            p.x += dx * 0.0004;
+            p.y += dy * 0.0004;
+          }
+
+          // Wrap
+          if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+          if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+
+          const a = p.alpha * (0.65 + 0.35 * Math.sin(p.pulse));
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${p.color},${a})`;
+          ctx.fill();
+
+          // Glow ring on larger particles
+          if (p.r > 1.1) {
+            const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4);
+            g.addColorStop(0, `rgba(${p.color},${a * 0.5})`);
+            g.addColorStop(1, `rgba(${p.color},0)`);
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2);
+            ctx.fillStyle = g;
+            ctx.fill();
+          }
+        });
+
+        // ⑤ Horizontal data-stream lines — enterprise feel
+        const streamCount = 4;
+        for (let i = 0; i < streamCount; i++) {
+          const y = H * (0.2 + i * 0.2);
+          const speed = (t * (0.025 + i * 0.01)) % W;
+          const len = 60 + i * 30;
+          const g = ctx.createLinearGradient(speed - len, y, speed + len, y);
+          const c = i % 2 === 0 ? '244,153,11' : '44,105,182';
+          g.addColorStop(0,   `rgba(${c},0)`);
+          g.addColorStop(0.5, `rgba(${c},0.18)`);
+          g.addColorStop(1,   `rgba(${c},0)`);
+          ctx.strokeStyle = g;
+          ctx.lineWidth = 0.6;
+          ctx.beginPath();
+          ctx.moveTo(speed - len, y);
+          ctx.lineTo(speed + len, y);
+          ctx.stroke();
+        }
+
+        raf = requestAnimationFrame(draw);
+      }
+
+      window.addEventListener('resize', () => { cancelAnimationFrame(raf); resize(); });
+      resize();
+      requestAnimationFrame(draw);
+    })();
+    (function drawFlowGraph(){
+      const canvas=document.getElementById('flowCanvas');
+      const W=window.innerWidth,H=window.innerHeight*2;
+      const nodes=[];
+      for(let i=0;i<28;i++){
+        nodes.push({
+          x:Math.random()*W,
+          y:Math.random()*H,
+          r:3+Math.random()*3
+        });
+      }
+      let lines='',dots='';
+      // Connect nearby nodes
+      nodes.forEach((a,i)=>{
+        nodes.forEach((b,j)=>{
+          if(j<=i)return;
+          const d=Math.hypot(a.x-b.x,a.y-b.y);
+          if(d<220){
+            const op=(1-(d/220))*.5;
+            lines+=`<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="#00d4b4" stroke-width="1" opacity="${op}"/>`;
+          }
+        });
+        dots+=`<circle cx="${a.x}" cy="${a.y}" r="${a.r}" fill="#00d4b4" opacity="0.5"/>`;
+        // Node handle squares (Flowise style)
+        dots+=`<rect x="${a.x-4}" y="${a.y-4}" width="8" height="8" rx="2" fill="none" stroke="#2c69b6" stroke-width="1" opacity="0.3"/>`;
       });
-    });
+      canvas.innerHTML=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${lines}${dots}</svg>`;
+    })();
   </script>
+
 </body>
 </html>
